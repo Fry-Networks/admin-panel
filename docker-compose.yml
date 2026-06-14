@@ -1,0 +1,82 @@
+services:
+  admin_panel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: admin_panel:prod
+    container_name: admin_panel
+    init: true
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3008:3008"
+    extra_hosts:
+      - "ares00-mongodb-rewardsdb.tail01e8c3.ts.net:100.107.174.29"
+      - "host.docker.internal:192.168.1.169"
+    dns:
+      - 100.100.100.100
+      - 8.8.8.8
+      - 1.1.1.1
+    environment:
+      MONGO_CA_CERT_PATH: "/etc/ssl/mongo/mongo-ca.crt"
+      NODE_ENV: production
+      PORT: "3008"
+      NEXTAUTH_URL: "https://admin.frynetworks.com/"
+      # Use internal loopback for server-to-server NextAuth calls.
+      NEXTAUTH_URL_INTERNAL: "http://127.0.0.1:3008"
+      NEXT_PUBLIC_DAO_TEST: "${NEXT_PUBLIC_DAO_TEST:-false}"
+      NEXTAUTH_SECRET: "op://AdminPanel/AdminPanel/NEXTAUTH_SECRET"
+      GITHUB_ID: "op://AdminPanel/AdminPanel/GITHUB_ID"
+      GITHUB_SECRET: "op://AdminPanel/AdminPanel/GITHUB_SECRET"
+      GITHUB_ID_DEV: "op://AdminPanel/AdminPanel/GITHUB_ID_DEV"
+      GITHUB_SECRET_DEV: "op://AdminPanel/AdminPanel/GITHUB_SECRET_DEV"
+      MONGO_URI: "op://AdminPanel/AdminPanel/MONGO_URI"
+      BASE_API_KEY: "op://AdminPanel/AdminPanel/BASE_API_KEY"
+      ADMIN_PASSWORD: "op://AdminPanel/AdminPanel/ADMIN_PASSWORD"
+      STAKE_MNEMONIC: "op://AdminPanel/AdminPanel/STAKE_MNEMONIC"
+      STAKE_REKEY: "op://AdminPanel/AdminPanel/STAKE_REKEY"
+      REWARD_REKEY: "op://AdminPanel/AdminPanel/REWARD_REKEY"
+      REWARD_MNEMONIC: "op://AdminPanel/AdminPanel/REWARD_MNEMONIC"
+      ALGOD_TOKEN: "${ALGOD_TOKEN}"
+      # FRYBOT_API_KEY is loaded from secret file in entrypoint
+    command: ["npm", "start"]
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"require('http').get('http://127.0.0.1:3008/api/health', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1));\""
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    read_only: true
+    tmpfs:
+      - /tmp
+      # Ensure Next.js cache is writable by the non-root user.
+      - /app/.next/cache:uid=1001,gid=1001,mode=0755
+      # Allow 1Password CLI to write ephemeral config when running op run.
+      - /home/appuser/.config:uid=1001,gid=1001,mode=0700
+    # Mount the MongoDB CA bundle so tlsCAFile is available inside the container.
+    volumes:
+      - /etc/ssl/mongo/mongo-ca.crt:/etc/ssl/mongo/mongo-ca.crt:ro
+    secrets:
+      - op_service_account_token
+      - frybot_api_key
+    security_opt:
+      - no-new-privileges:true
+    cap_add:
+      - SETUID
+      - SETGID
+    cap_drop:
+      - ALL
+
+secrets:
+  op_service_account_token:
+    file: /etc/opt/adminpanel/op_service_account_token
+  frybot_api_key:
+    file: /etc/opt/adminpanel/frybot_api_key

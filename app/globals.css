@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Dark mode CSS variables for Tremor */
+:root {
+  --tremor-content-subtle: #6b7280;
+  --tremor-content-DEFAULT: #9ca3af;
+  --tremor-content-emphasis: #e5e7eb;
+  --tremor-content-strong: #f9fafb;
+  --tremor-border-DEFAULT: #374151;
+  --tremor-ring-DEFAULT: #e74c3c;
+  --tremor-background-DEFAULT: #0a0a0f;
+  --tremor-background-subtle: #1f2937;
+  --tremor-background-muted: #131A2B;
+  --tremor-brand-DEFAULT: #e74c3c;
+  --tremor-brand-emphasis: #c0392b;
+}
+
+/* Dark body/html background */
+html, body {
+  background-color: #030712;
+  color: #f9fafb;
+}
+
+/* Dark scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Red accent selection color */
+::selection {
+  background-color: rgba(231, 76, 60, 0.3);
+  color: #f9fafb;
+}
+
+.ReactModal__Overlay {
+    opacity: 0;
+    transition: opacity 500ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open{
+    opacity: 1;
+}
+
+.ReactModal__Overlay--before-close{
+    opacity: 0;
+}
+
+.license-text {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .license-text {
+        width: 50%;
+    }
+}
