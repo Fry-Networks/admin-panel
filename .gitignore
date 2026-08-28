@@ -37,3 +37,24 @@ package-lock.json
 next-env.d.ts
 
 package.json
+
+# open-source hygiene
+.env.*
+!.env.example
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa
+id_ed25519
+.npmrc
+.netrc
+*.tfstate
+*.tfstate.*
+kubeconfig
+serviceAccount*.json
+secrets.json
+*.sqlite
+*.sqlite3
+*.db

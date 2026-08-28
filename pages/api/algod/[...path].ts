@@ -79,7 +79,7 @@ async function checkAtlasFreshness(): Promise<boolean> {
 
   const atlasStatus = await fetchStatus(ALGOD_PRIMARY, process.env.ALGOD_TOKEN || '');
   if (!atlasStatus) {
-    console.log('[algod-proxy] ATLAS00 /v2/status fetch failed, routing to Nodely');
+    console.log('[algod-proxy] <internal-host> /v2/status fetch failed, routing to Nodely');
     atlas00Healthy = false;
     return false;
   }
@@ -105,7 +105,7 @@ async function checkAtlasFreshness(): Promise<boolean> {
 
   const roundsBehind = nodelyRound - atlasStatus.lastRound;
   if (roundsBehind > STALE_THRESHOLD) {
-    console.log(`[algod-proxy] ATLAS00 is ${roundsBehind} rounds behind Nodely (${atlasStatus.lastRound} vs ${nodelyRound}), routing to Nodely`);
+    console.log(`[algod-proxy] <internal-host> is ${roundsBehind} rounds behind Nodely (${atlasStatus.lastRound} vs ${nodelyRound}), routing to Nodely`);
     atlas00Healthy = false;
     return false;
   }
@@ -131,7 +131,7 @@ async function getRawBody(req: NextApiRequest): Promise<ArrayBuffer> {
 }
 
 /**
- * Make HTTP request to ATLAS00 using http module (bypasses port blocking).
+ * Make HTTP request to <internal-host> using http module (bypasses port blocking).
  * When rawResponse is true, returns the raw buffer instead of JSON-parsed data.
  */
 function httpRequest(

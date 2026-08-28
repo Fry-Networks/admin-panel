@@ -1,5 +1,5 @@
 /**
- * Server-side algod client with ATLAS00 primary + Nodely fallback.
+ * Server-side algod client with <internal-host> primary + Nodely fallback.
  * Used by getServerSideProps and API routes.
  */
 
